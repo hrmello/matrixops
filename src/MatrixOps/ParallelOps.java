@@ -14,8 +14,8 @@ public class ParallelOps {
 	public double [][] soma;
 	public double [][] subt;
 	public double [][] prod;
-	public double [][] trans1;
-	public double [][] trans2 ;
+	public double [][] transp1;
+	public double [][] transp2 ;
 	
 	public ParallelOps(double [][]mat1, double [][]mat2) { 
 			
@@ -34,8 +34,8 @@ public class ParallelOps {
 		this.soma = new double[m][n];
 		this.subt = new double[m][n];
 		this.prod = new double[m][q];
-		this.trans1 = new double[n][m];
-		this.trans2 = new double[q][p];
+		this.transp1 = new double[n][m];
+		this.transp2 = new double[q][p];
 		
 		// inicialização da matriz de soma
 		for (int i = 0; i < m; i++) {
@@ -61,14 +61,14 @@ public class ParallelOps {
 		// inicialização da matriz transposta 1
 		for (int i = 0; i < n; i++) {
 			for (int j = 0; j < m; j++) {
-				this.trans1[i][j] = 0.0;
+				this.transp1[i][j] = 0.0;
 			};
 		};
 		
 		// inicialização da matriz transposta 2
 		for (int i = 0; i < q; i++) {
 			for (int j = 0; j < p; j++) {
-				this.trans2[i][j] = 0.0;
+				this.transp2[i][j] = 0.0;
 			};
 		};
 	};
@@ -79,6 +79,7 @@ public class ParallelOps {
 		List<ThreadSum> threadsSum = new ArrayList<ThreadSum>();
 		List<ThreadSubt> threadsSubt = new ArrayList<ThreadSubt>();
 		List<ThreadProd> threadsProd = new ArrayList<ThreadProd>();
+		List<ThreadTransp> threadsTransp = new ArrayList<ThreadTransp>();
 		
 		if (m!=p || n!= q) {
 			System.out.println("Não é possível somar ou subtrair pois as dimensões das matrizes são diferentes");
@@ -87,10 +88,15 @@ public class ParallelOps {
 			for (int row = 0; row < this.m; row++) {
 				threadsSum.add(new ThreadSum("Thread " + row, row, mat1, mat2, soma));
 				threadsSubt.add(new ThreadSubt("Thread " + row, row, mat1, mat2, subt));
+				threadsTransp.add(new ThreadTransp("Thread " + row, row, mat1, transp1));
+				threadsTransp.add(new ThreadTransp("Thread " + row + " 2", row, mat2, transp2));
+				
 			};
 		};
+		
+		// etapas para multiplicação
 		int numberOfSlicesM1 = 3; // dividir a matriz 1 em numberOfSlicesM1 partes 
-		int numberOfSlicesM2 = 3;
+		int numberOfSlicesM2 = 3; // dividir a matriz 2 em numberOfSlicesM2 partes 
 		
 		int stepsRow = 0;
 		int stepsCol = 0;
@@ -133,6 +139,10 @@ public class ParallelOps {
 			thread.start();
 		};
 		
+		for ( ThreadTransp thread : threadsTransp) {
+			thread.start();
+		};
+		
 		for ( ThreadSum thread : threadsSum) {
 			try {thread.join();} catch (Exception e) {System.out.println(e);}
 		};
@@ -142,6 +152,10 @@ public class ParallelOps {
 		};
 		
 		for ( ThreadProd thread : threadsProd) {
+			try {thread.join();} catch (Exception e) {System.out.println(e);}
+		};
+		
+		for ( ThreadTransp thread : threadsTransp) {
 			try {thread.join();} catch (Exception e) {System.out.println(e);}
 		};
 		
