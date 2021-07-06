@@ -64,15 +64,20 @@ public class ParallelOps {
 		if (m!=p || n!= q) {
 			System.out.println("Não é possível somar ou subtrair pois as dimensões das matrizes são diferentes");
 		} else {
-			// soma, subtração e transposta são paralelizadas por linhas (uma linha por núcleo)
+			// soma e subtração são paralelizadas por linhas (uma linha por núcleo)
 			for (int row = 0; row < this.m; row++) {
 				threadsSum.add(new ThreadSum("Thread " + row, row, mat1, mat2, soma));
-				threadsSubt.add(new ThreadSubt("Thread " + row, row, mat1, mat2, subt));
-				threadsTransp.add(new ThreadTransp("Thread " + row, row, mat1, transp1));
-				threadsTransp.add(new ThreadTransp("Thread " + row + " 2", row, mat2, transp2));
-				
+				threadsSubt.add(new ThreadSubt("Thread " + row, row, mat1, mat2, subt));				
 			};
 		};
+		
+		for (int row = 0; row < this.m;row++) {
+			threadsTransp.add(new ThreadTransp("Thread " + row, row, mat1, transp1));
+		}
+		
+		for (int row = 0; row < this.p;row++) {
+			threadsTransp.add(new ThreadTransp("Thread " + row + " 2", row, mat2, transp2));
+		}
 		
 		// etapas para multiplicação
 		int numberOfSlicesM1 = 2; // dividir a matriz 1 em numberOfSlicesM1 partes 
@@ -95,15 +100,20 @@ public class ParallelOps {
 		
 		System.out.println("steps Row e steps Col" + " " + stepsRow + " " + stepsCol);
 		int threadNum = 0;
-		for (int rowMult = 0; rowMult < numberOfSlicesM1; rowMult++) {
-			for (int colMult = 0; colMult < numberOfSlicesM2; colMult++) {
-				System.out.println("startRow = " + stepsRow*rowMult);
-				System.out.println("endRow = " + stepsRow*(rowMult+1));
-				System.out.println("startCol = " + stepsCol*colMult);
-				System.out.println("endCol = " + stepsCol*(colMult+1));
-				System.out.println("--------------------------------");
-				threadsProd.add(new ThreadProd("Thread " + threadNum, stepsRow*rowMult, stepsRow*(rowMult+1), stepsCol*colMult, stepsCol*(colMult+1), mat1, mat2, prod));
-				threadNum++;
+		
+		if (n!=p) {
+			System.out.println("Não é possível multiplicar uma matriz cujo número de linhas seja diferente do número de colunas da outra");
+		} else {
+			for (int rowMult = 0; rowMult < numberOfSlicesM1; rowMult++) {
+				for (int colMult = 0; colMult < numberOfSlicesM2; colMult++) {
+					System.out.println("startRow = " + stepsRow*rowMult);
+					System.out.println("endRow = " + stepsRow*(rowMult+1));
+					System.out.println("startCol = " + stepsCol*colMult);
+					System.out.println("endCol = " + stepsCol*(colMult+1));
+					System.out.println("--------------------------------");
+					threadsProd.add(new ThreadProd("Thread " + threadNum, stepsRow*rowMult, stepsRow*(rowMult+1), stepsCol*colMult, stepsCol*(colMult+1), mat1, mat2, prod));
+					threadNum++;
+				}
 			}
 		}
 		

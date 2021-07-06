@@ -51,6 +51,14 @@ public class seriesOps {
 		};
 	}
 	
+	public void transpMatrix(int dimRows, int dimCols, double[][] finalMatrix, double [][] entryMatrix) {
+		for (int i =0; i < dimRows; i++) {
+			for (int j = 0; j < dimCols; j++) {
+				finalMatrix[i][j] = entryMatrix[j][i];
+			};
+		};
+	}
+	
 	public void runSeriesOps(){
 	// verifica se é possível somar ou subtrair as matrizes (dimensões iguais)
 		if (this.m != this.p || this.n!= this.q) {
@@ -86,18 +94,13 @@ public class seriesOps {
 			};
 		};
 		
-		//transposição
-		for (int i =0; i < this.n; i++) {
-			for (int j = 0; j < this.m; j++) {
-				this.trans1[i][j] = this.mat1[j][i];
-			};
-		};
+
+		// transposição
+		transpMatrix(this.n, this.m, this.trans1, this.mat1);
 		
-		for (int i =0; i < this.q; i++) {
-			for (int j = 0; j < this.p; j++) {
-				this.trans2[i][j] = this.mat2[j][i];
-			};
-		};
-		
+		transpMatrix(this.q, this.p, this.trans2, this.mat2);
+				
 	}
+	
+	
 }
