@@ -35,41 +35,21 @@ public class seriesOps {
 		this.trans1 = new double[n][m];
 		this.trans2 = new double[q][p];
 		
-		// inicialização da matriz de soma
-		for (int i = 0; i < m; i++) {
-			for (int j = 0; j < n; j++) {
-				this.soma[i][j] = 0.0;
-			};
-		};
-		
-		// inicialização da matriz de subtração
-		for (int i = 0; i < m; i++) {
-			for (int j = 0; j < n; j++) {
-				this.subt[i][j] = 0.0;
-			};
-		};
-		
-		// inicialização da matriz de produto
-		for (int i = 0; i < m; i++) {
-			for (int j = 0; j < q; j++) {
-				this.prod[i][j] = 0.0;
-			};
-		};
-		
-		// inicialização da matriz transposta 1
-		for (int i = 0; i < n; i++) {
-			for (int j = 0; j < m; j++) {
-				this.trans1[i][j] = 0.0;
-			};
-		};
-		
-		// inicialização da matriz transposta 2
-		for (int i = 0; i < q; i++) {
-			for (int j = 0; j < p; j++) {
-				this.trans2[i][j] = 0.0;
-			};
-		};
+		// inicialização das matrizes
+		initializeMatrix(m,n,this.soma);
+		initializeMatrix(m,n,this.subt);
+		initializeMatrix(m,q,this.prod);
+		initializeMatrix(n,m,this.trans1);
+		initializeMatrix(q, p, this.trans2);
 	};
+	
+	public void initializeMatrix(int dimRows, int dimCols, double [][] matrix) {
+		for (int i = 0; i < dimRows; i++) {
+			for (int j = 0; j < dimRows; j++) {
+				matrix[i][j] = 0.0;
+			};
+		};
+	}
 	
 	public void runSeriesOps(){
 	// verifica se é possível somar ou subtrair as matrizes (dimensões iguais)
